@@ -17,27 +17,70 @@ variable "tags" {
   }
 }
 
-variable "queue" {
-  type = list(object({
-    name                      = string
-    delay_seconds             = number
-    max_message_size          = number
-    message_retention_seconds = number
-    receive_wait_time_seconds = number
-  }))
-
-  default = [{
-    name                      = "terraform-example-queue-01"
-    delay_seconds             = 90
-    max_message_size          = 2048
-    message_retention_seconds = 86400
-    receive_wait_time_seconds = 10
-    },
-    {
-      name                      = "terraform-example-queue-02"
-      delay_seconds             = 90
-      max_message_size          = 2048
-      message_retention_seconds = 86400
-      receive_wait_time_seconds = 10
-  }]
+variable "vpc" {
+  type = object({
+    name                     = string
+    internet_gateway_name    = string
+    cidr_block               = string
+    public_route_table_name  = string
+    private_route_table_name = string
+    nat_gateway_name         = string
+    public_subnets = list(object({
+      name                    = string
+      cidr_block              = string
+      availability_zone       = string
+      map_public_ip_on_launch = bool
+    }))
+    private_subnets = list(object({
+      name                    = string
+      cidr_block              = string
+      availability_zone       = string
+      map_public_ip_on_launch = bool
+    }))
+  })
+  default = {
+    name                     = "mini-aws-devops-course-vpc"
+    internet_gateway_name    = "mini-aws-devops-course-internet-gateway"
+    cidr_block               = "10.0.0.0/24"
+    public_route_table_name  = "mini-aws-devops-course-public-route-table"
+    private_route_table_name = "mini-aws-devops-course-private-route-table"
+    nat_gateway_name         = "mini-aws-devops-course-nat-gateway"
+    public_subnets = [
+      {
+        name                    = "mini-aws-devops-course-vpc-public-subnet-1a"
+        cidr_block              = "10.0.0.0/26"
+        availability_zone       = "us-east-1a"
+        map_public_ip_on_launch = true
+      },
+      {
+        name                    = "mini-aws-devops-course-vpc-public-subnet-1c"
+        cidr_block              = "10.0.0.64/26"
+        availability_zone       = "us-east-1c"
+        map_public_ip_on_launch = true
+      }
+    ]
+    private_subnets = [
+      {
+        name                    = "mini-aws-devops-course-vpc-private-subnet-1a"
+        cidr_block              = "10.0.0.128/26"
+        availability_zone       = "us-east-1a"
+        map_public_ip_on_launch = false
+      },
+      {
+        name                    = "mini-aws-devops-course-vpc-private-subnet-1c"
+        cidr_block              = "10.0.0.192/26"
+        availability_zone       = "us-east-1c"
+        map_public_ip_on_launch = false
+      }
+    ]
+  }
 }
+
+# variable "eip" {
+#   type = object({
+#     name = string
+#   })
+#   default = {
+#     name = "mini-aws-devops-course-eip"
+#   }
+# }

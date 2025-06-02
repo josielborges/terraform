@@ -6,7 +6,7 @@ This project demonstrates how to provision AWS infrastructure using Terraform. I
 
 The project is organized into two main directories:
 
-- `main-stack`: Responsible for main infrastructure components like SQS queues.
+- `main-stack`: Responsible for main infrastructure components like SQS queues and VPC.
 - `remote-backend-stack`: Sets up the remote state backend (S3 + DynamoDB).
 
 ![Project Structure](image.png)
@@ -60,13 +60,27 @@ terraform apply
 
 ### `main-stack`
 
-- **SQS Queues** with multiple configurations:
-  - `terraform-example-queue-01`
-  - `terraform-example-queue-02`
-- Example output (`outputs.tf`):
+- **VPC and Networking Resources**:
+  - VPC
+  - Internet Gateway
+  - Public and Private Subnets (across AZs)
+
+- Outputs:
 ```hcl
-output "sqs_queue_urls" {
-  value = aws_sqs_queue.this[*].id
+output "vpc_id" {
+  value = aws_vpc.this.id
+}
+
+output "internet_gateway_id" {
+  value = aws_internet_gateway.this.id
+}
+
+output "public_subnet_ids" {
+  value = aws_subnet.public[*].id
+}
+
+output "private_subnet_ids" {
+  value = aws_subnet.private[*].id
 }
 ```
 
